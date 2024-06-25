@@ -13,13 +13,12 @@ const MenuItem = (props: MenuItemProps) => {
     return <div
         className={`flex items-center py-2 px-3 rounded hover:bg-gray-100 cursor-pointer ${active ? 'bg-gray-100 hover:bg-gray-200' : ''}`}
         onClick={() => route && router.push(route)}
-        children={<>
-            {icon && <span className={`me-2 text-lg ${active ? 'text-blue-600' : 'text-gray-500'}`}>
-                <Icon name={icon} fitted />
-            </span>}
-            <span className="font-semibold">{name}</span>
-        </>}
-    />
+    >
+        {icon && <span className={`me-2 text-lg ${active ? 'text-blue-600' : 'text-gray-500'}`}>
+            <Icon name={icon} fitted />
+        </span>}
+        <span className="font-semibold">{name}</span>
+    </div>
 }
 
 const MenuRow = (props: MenuItemProps) => <>
