@@ -7,7 +7,7 @@ const defaultHeaders = {
 }
 
 export const axios = Axios.create({
-    baseURL: "http://localhost:8000/api",
+    baseURL: process.env.NEXT_PUBLIC_API_SERVER,
     timeout: 10000,
     headers: defaultHeaders
 });

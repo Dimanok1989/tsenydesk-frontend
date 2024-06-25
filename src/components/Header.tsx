@@ -9,7 +9,7 @@ export default function Header() {
 
         <div className="flex items-center gap-2 grow">
             <Image src="/favicon.ico" className="w-[2.5rem] h-[2.5rem] rounded" />
-            <div className="font-sans text-xl font-bold">Tsenydesk</div>
+            <div className="font-sans text-xl font-bold">{process.env.NEXT_PUBLIC_APP_NAME || "Tsenydesk"}</div>
         </div>
 
         {app?.data?.profile && <div className="flex items-center gap-2">
