@@ -55,6 +55,7 @@ export default function CreateLeads() {
                     handleChange={handleChange}
                     statuses={create.response?.statuses || []}
                     employees={create.response?.employees || []}
+                    inspections={create.response?.inspections || []}
                     fields={create.response?.fields || []}
                 />
 

@@ -101,7 +101,7 @@ export default function EmployeeField({
             placeholder={placeholder || "Выберите сотурдника"}
             selection
             fluid={fluid}
-            options={options.map(i => ({ value: i.id, text: i.fullname }))}
+            options={options.map(i => ({ key: i.id, value: i.id, text: i.fullname }))}
             noResultsMessage="Ничего не найдено"
             search
             onSearchChange={handleSearchChange}

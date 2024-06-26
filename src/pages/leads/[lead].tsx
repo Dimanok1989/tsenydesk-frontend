@@ -10,10 +10,10 @@ import { setLead } from "@/stores/leads";
 import moment from "moment";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Feed, Header, Icon } from "semantic-ui-react";
+import { Feed, Header, Icon, Label } from "semantic-ui-react";
 
 const ItemValue = (props: any) => <div className="flex items-center p-2 rounded cursor-default hover:bg-slate-50">
-    <div className="min-w-[40%]"><strong>{props.text}</strong></div>
+    <div className="min-w-[50%] mr-3"><strong>{props.text}</strong></div>
     <div>{props.value}</div>
 </div>
 
@@ -59,7 +59,7 @@ export default function Leads() {
             <div className="flex justify-between items-center">
                 <Header
                     as="h1"
-                    content={lead?.number}
+                    content={`Замер ${lead?.number}`}
                     subheader={(lead?.name && lead.name !== lead.number) && lead.number}
                 />
                 <div>
@@ -83,28 +83,61 @@ export default function Leads() {
                     value={lead?.number}
                 />
                 <ItemValue
+                    text="Срок продажи"
+                    value={lead?.date_sale_term && <span>
+                        {moment(lead.date_sale_term).format("DD.MM.YYYY")}
+                        {(moment().format("X") < moment(lead.date_sale_term).format("X")) && <span className="opacity-60 pl-4">
+                            через {moment(lead.date_sale_term).diff(moment(), "days")} дн.
+                        </span>}
+                    </span>}
+                />
+                <ItemValue
                     text="Дата продажи"
                     value={lead?.date_sale && moment(lead.date_sale).format("DD.MM.YYYY")}
                 />
                 <ItemValue
-                    text="Дата поступления документов"
-                    value={lead?.date_sent_documents && moment(lead.date_sent_documents).format("DD.MM.YYYY")}
+                    text="Ориентировочная дата поступления документов"
+                    value={lead?.date_sent_documents ? moment(lead.date_sent_documents).format("DD.MM.YYYY") : "---"}
                 />
                 <ItemValue
-                    text="Дата проверки"
-                    value={lead?.date_inspection && moment(lead.date_inspection).format("DD.MM.YYYY")}
+                    text="Фактическая дата поступления документов"
+                    value={lead?.date_sent_documents_actual ? moment(lead.date_sent_documents_actual).format("DD.MM.YYYY") : "---"}
                 />
                 <ItemValue
-                    text="Дата выполненого перезамера"
-                    value={lead?.date_remeasurement && moment(lead.date_remeasurement).format("DD.MM.YYYY")}
+                    text="Ориентировочная дата проверки"
+                    value={lead?.date_inspection ? moment(lead.date_inspection).format("DD.MM.YYYY") : "---"}
                 />
                 <ItemValue
-                    text="Дата запуска"
-                    value={lead?.date_start && moment(lead.date_start).format("DD.MM.YYYY")}
+                    text="Фактическая дата проверки"
+                    value={lead?.date_inspection_actual ? moment(lead.date_inspection_actual).format("DD.MM.YYYY") : "---"}
+                />
+                <ItemValue
+                    text="Критерии проверки"
+                    value={<div className="flex gap-3">
+                        {(lead?.inspections || []).map((item: string, key: number) => <Label key={key} color="orange">
+                            {item}
+                        </Label>)}
+                    </div>}
+                />
+                <ItemValue
+                    text="Ориентировочная дата выполненого перезамера"
+                    value={lead?.date_remeasurement ? moment(lead.date_remeasurement).format("DD.MM.YYYY") : "---"}
+                />
+                <ItemValue
+                    text="Фактическая дата выполненого перезамера"
+                    value={lead?.date_remeasurement_actual ? moment(lead.date_remeasurement_actual).format("DD.MM.YYYY") : "---"}
+                />
+                <ItemValue
+                    text="Ориентировочная дата запуска"
+                    value={lead?.date_start ? moment(lead.date_start).format("DD.MM.YYYY") : "---"}
+                />
+                <ItemValue
+                    text="Фактическая дата запуска"
+                    value={lead?.date_start_actual ? moment(lead.date_start_actual).format("DD.MM.YYYY") : "---"}
                 />
                 <ItemValue
                     text="Сотрудник"
-                    value={lead?.customer?.fullname}
+                    value={lead?.employee?.fullname || "---"}
                 />
                 {fields.map((field: FieldProps) => <ItemValue
                     key={field.id}

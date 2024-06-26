@@ -1,6 +1,6 @@
 import { useAppSelector } from "@/stores/hooks";
 import Card from "../Views/Card";
-import { Dropdown, Icon, Table } from "semantic-ui-react";
+import { Dropdown, Icon, Label, Table } from "semantic-ui-react";
 import moment from "moment";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -69,11 +69,36 @@ const TableRow = (props: LeadResource) => {
         </Table.Cell>
         {/* <Table.Cell>{props.status && <StatusCard {...props.status} />}</Table.Cell> */}
         <Table.Cell><Link href={`/leads/${props.id}`} className="text-blue-900">{props.number}</Link></Table.Cell>
-        <Table.Cell>{props.date_sale && moment(props.date_sale).format("DD.MM.YYYY")}</Table.Cell>
-        <Table.Cell>{props.date_sent_documents && moment(props.date_sent_documents).format("DD.MM.YYYY")}</Table.Cell>
-        <Table.Cell>{props.date_inspection && moment(props.date_inspection).format("DD.MM.YYYY")}</Table.Cell>
-        <Table.Cell>{props.date_remeasurement && moment(props.date_remeasurement).format("DD.MM.YYYY")}</Table.Cell>
-        <Table.Cell>{props.date_start && moment(props.date_start).format("DD.MM.YYYY")}</Table.Cell>
+        <Table.Cell>
+            {props.date_sale && <div>{moment(props.date_sale).format("DD.MM.YYYY")}</div>}
+            {props.date_sale_term && <div className="flex gap-3">
+                {moment(props.date_sale_term).format("DD.MM.YYYY")}
+                {(moment().format("X") < moment(props.date_sale_term).format("X")) && <div className="opacity-60">
+                    через {moment(props.date_sale_term).diff(moment(), "days")} дн.
+                </div>}
+            </div>}
+        </Table.Cell>
+        <Table.Cell>
+            {props.date_sent_documents && <div className="opacity-70">{moment(props.date_sent_documents).format("DD.MM.YYYY")}</div>}
+            {props.date_sent_documents_actual && moment(props.date_sent_documents_actual).format("DD.MM.YYYY")}
+        </Table.Cell>
+        <Table.Cell>
+            {props.date_inspection && <div className="opacity-70">{moment(props.date_inspection).format("DD.MM.YYYY")}</div>}
+            {props.date_inspection_actual && <div>{moment(props.date_inspection_actual).format("DD.MM.YYYY")}</div>}
+            {(props?.inspections || []).length > 0 && <div className="flex">
+                {(props?.inspections || []).map((item: string, key: number) => <Label key={key} color="orange" size="tiny">
+                    {item}
+                </Label>)}
+            </div>}
+        </Table.Cell>
+        <Table.Cell>
+            {props.date_remeasurement && <div className="opacity-70">{moment(props.date_remeasurement).format("DD.MM.YYYY")}</div>}
+            {props.date_remeasurement_actual && moment(props.date_remeasurement_actual).format("DD.MM.YYYY")}
+        </Table.Cell>
+        <Table.Cell>
+            {props.date_start && <div className="opacity-70">{moment(props.date_start).format("DD.MM.YYYY")}</div>}
+            {props.date_start_actual && moment(props.date_start_actual).format("DD.MM.YYYY")}
+        </Table.Cell>
         <Table.Cell>{props?.employee?.fullname}</Table.Cell>
         <Table.Cell>{props.created_at && moment(props.created_at).format("DD.MM.YYYY в HH:mm")}</Table.Cell>
         {fields.map((field: FieldProps) => <Table.Cell key={`${props.id}-${field.name}`}>

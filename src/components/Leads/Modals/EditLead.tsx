@@ -69,6 +69,7 @@ export default function EditLead(props: EditLeadProps) {
                 handleChange={handleChange}
                 statuses={response.statuses || []}
                 employees={response.employees || []}
+                inspections={response.inspections || []}
                 fields={response.fields || []}
             />
 
