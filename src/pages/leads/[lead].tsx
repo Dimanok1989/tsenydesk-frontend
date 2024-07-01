@@ -96,7 +96,7 @@ export default function Leads() {
                     value={lead?.date_sale && moment(lead.date_sale).format("DD.MM.YYYY")}
                 />
                 <ItemValue
-                    text="Ориентировочная дата поступления документов"
+                    text="Дата ожидаемой подачи документов"
                     value={lead?.date_sent_documents ? moment(lead.date_sent_documents).format("DD.MM.YYYY") : "---"}
                 />
                 <ItemValue

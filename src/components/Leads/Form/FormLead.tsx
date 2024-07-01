@@ -1,4 +1,4 @@
-import { Dropdown, Form } from "semantic-ui-react";
+import { Checkbox, Form } from "semantic-ui-react";
 import moment from "moment";
 import { FieldProps } from "@/stores/fields";
 import SelectMultiple from "@/components/Fields/Items/SelectMultiple";
@@ -30,6 +30,10 @@ export default function FormLead(props: FormLeadProps) {
         fields,
         inspections,
     } = props;
+
+    const remeasurement = typeof formdata?.inspection_types == "object"
+        && typeof formdata?.inspection_types[2] == "boolean"
+        && formdata.inspection_types[2] === false;
 
     return <Form>
 
@@ -75,7 +79,21 @@ export default function FormLead(props: FormLeadProps) {
             label="Дата продажи"
             type="date"
             name="date_sale"
-            onChange={handleChange}
+            onChange={(e, { name, value }) => {
+                handleChange(e, { name, value });
+                if (!Boolean(formdata?.date_sent_documents)) {
+                    handleChange(e, {
+                        name: "date_sent_documents",
+                        value: moment(value).add(1, "days").format("YYYY-MM-DD")
+                    });
+                }
+                if (!Boolean(formdata?.date_inspection)) {
+                    handleChange(e, {
+                        name: "date_inspection",
+                        value: moment(value).add(2, "days").format("YYYY-MM-DD")
+                    });
+                }
+            }}
             value={formdata.date_sale ? moment(formdata.date_sale).format("YYYY-MM-DD") : ""}
             disabled={loading}
             error={errors?.date_sale}
@@ -118,11 +136,11 @@ export default function FormLead(props: FormLeadProps) {
 
         <Form.Group widths='equal' className="!mt-8">
             <Form.Input
-                label="Дата поступления документов"
+                label="Дата ожидаемой подачи документов"
                 type="date"
                 name="date_sent_documents"
                 onChange={handleChange}
-                value={formdata.date_sent_documents ? moment(formdata.date_sent_documents).format("YYYY-MM-DD") : ""}
+                value={formdata?.date_sent_documents ? moment(formdata.date_sent_documents).format("YYYY-MM-DD") : ""}
                 disabled={loading}
                 error={errors?.date_sent_documents}
             />
@@ -131,7 +149,7 @@ export default function FormLead(props: FormLeadProps) {
                 type="date"
                 name="date_sent_documents_actual"
                 onChange={handleChange}
-                value={formdata.date_sent_documents_actual ? moment(formdata.date_sent_documents_actual).format("YYYY-MM-DD") : ""}
+                value={formdata?.date_sent_documents_actual ? moment(formdata.date_sent_documents_actual).format("YYYY-MM-DD") : ""}
                 disabled={loading}
                 error={errors?.date_sent_documents_actual}
             />
@@ -139,11 +157,11 @@ export default function FormLead(props: FormLeadProps) {
 
         <Form.Group widths='equal'>
             <Form.Input
-                label="Дата проверки"
+                label="Дата ожидаемой проверки"
                 type="date"
                 name="date_inspection"
                 onChange={handleChange}
-                value={formdata.date_inspection ? moment(formdata.date_inspection).format("YYYY-MM-DD") : ""}
+                value={formdata?.date_inspection ? moment(formdata.date_inspection).format("YYYY-MM-DD") : ""}
                 disabled={loading}
                 error={errors?.date_inspection}
             />
@@ -152,31 +170,58 @@ export default function FormLead(props: FormLeadProps) {
                 type="date"
                 name="date_inspection_actual"
                 onChange={handleChange}
-                value={formdata.date_inspection_actual ? moment(formdata.date_inspection_actual).format("YYYY-MM-DD") : ""}
+                value={formdata?.date_inspection_actual ? moment(formdata.date_inspection_actual).format("YYYY-MM-DD") : ""}
                 disabled={loading}
                 error={errors?.date_inspection_actual}
             />
         </Form.Group>
 
-        <Form.Field>
-            <label>Критерии проверки</label>
-            <Dropdown
-                name="inspection_types"
-                label="Критерии проверки"
-                placeholder="Выберите критерии"
-                selection
-                fluid
-                options={inspections || []}
-                noResultsMessage="Ничего не найдено"
-                onChange={handleChange}
-                disabled={loading}
-                value={formdata.inspection_types}
-                error={errors?.inspection_types}
-                multiple
-            />
+        <Form.Field className="!mb-5">
+            <label className="!mb-3">Критерии проверки</label>
+            {(inspections || []).map((e: any, key: number) => {
+                return <div className="flex gap-3 items-center mb-2" key={key}>
+                    <span className="cursor-default">{e.text}</span>
+                    <Checkbox
+                        radio
+                        label="Да"
+                        name={`inspection_types_${key}`}
+                        className="!ms-3"
+                        value={e.value}
+                        checked={
+                            typeof formdata?.inspection_types == "object"
+                            && typeof formdata?.inspection_types[e.value] == "boolean"
+                            && formdata.inspection_types[e.value] === true
+                        }
+                        onClick={(e, { value, checked }: any) => {
+                            let inspectionTypes: any = formdata?.inspection_types || {};
+                            inspectionTypes[value] = checked
+                            handleChange(e, { name: 'inspection_types', value: inspectionTypes })
+                        }}
+                        disabled={loading}
+                    />
+                    <Checkbox
+                        radio
+                        label="Нет"
+                        name={`inspection_types_${key}`}
+                        className="!ms-3"
+                        value={e.value}
+                        checked={
+                            typeof formdata?.inspection_types == "object"
+                            && typeof formdata?.inspection_types[e.value] == "boolean"
+                            && formdata.inspection_types[e.value] === false
+                        }
+                        onClick={(e, { value, checked }: any) => {
+                            let inspectionTypes: any = formdata?.inspection_types || {};
+                            inspectionTypes[value] = !checked
+                            handleChange(e, { name: 'inspection_types', value: inspectionTypes })
+                        }}
+                        disabled={loading}
+                    />
+                </div>
+            })}
         </Form.Field>
 
-        <Form.Group widths='equal'>
+        <Form.Group widths='equal' className={`${remeasurement ? '' : '!hidden'}`}>
             <Form.Input
                 label="Дата выполненого перезамера"
                 type="date"

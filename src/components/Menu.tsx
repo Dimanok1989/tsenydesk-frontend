@@ -29,7 +29,7 @@ export default function Menu() {
 
     const { data } = useApp();
 
-    return <div className="w-[16rem] pt-4 px-4 fixed top-[4rem] left-0 bottom-0 bg-white">
+    return <div className="w-[16rem] pt-4 px-4 fixed top-[4rem] left-0 bottom-0 bg-white hidden md:block">
         {data.menu && data.menu.map((item, key) => <MenuRow key={key} {...item} />)}
     </div>
 }

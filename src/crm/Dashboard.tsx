@@ -12,7 +12,7 @@ const Dashboard = ({ children }: Props) => {
         <Header />
         <div className="pt-[4rem] z-10 min-h-screen">
             <Menu />
-            <div className="pl-[16rem]">
+            <div className="md:pl-[16rem]">
                 {children}
             </div>
         </div>
