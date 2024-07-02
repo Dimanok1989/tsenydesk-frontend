@@ -21,7 +21,7 @@ export default function TableLeads() {
                     <Table.HeaderCell>Дата продажи</Table.HeaderCell>
                     <Table.HeaderCell>Дата поступления документов</Table.HeaderCell>
                     <Table.HeaderCell>Дата проверки</Table.HeaderCell>
-                    <Table.HeaderCell>Дата выполненого перезамера</Table.HeaderCell>
+                    <Table.HeaderCell>Перезамер</Table.HeaderCell>
                     <Table.HeaderCell>Дата запуска</Table.HeaderCell>
                     <Table.HeaderCell>Фамилия</Table.HeaderCell>
                     <Table.HeaderCell>Дата создания</Table.HeaderCell>
@@ -92,8 +92,9 @@ const TableRow = (props: LeadResource) => {
             </div>}
         </Table.Cell>
         <Table.Cell>
-            {props.date_remeasurement && <div className="opacity-70">{moment(props.date_remeasurement).format("DD.MM.YYYY")}</div>}
-            {props.date_remeasurement_actual && moment(props.date_remeasurement_actual).format("DD.MM.YYYY")}
+            {(props?.remeasurements || []).length}
+            {/* {props.date_remeasurement && <div className="opacity-70">{moment(props.date_remeasurement).format("DD.MM.YYYY")}</div>}
+            {props.date_remeasurement_actual && moment(props.date_remeasurement_actual).format("DD.MM.YYYY")} */}
         </Table.Cell>
         <Table.Cell>
             {props.date_start && <div className="opacity-70">{moment(props.date_start).format("DD.MM.YYYY")}</div>}

@@ -84,32 +84,32 @@ export default function Leads() {
                 />
                 <ItemValue
                     text="Срок продажи"
-                    value={lead?.date_sale_term && <span>
-                        {moment(lead.date_sale_term).format("DD.MM.YYYY")}
+                    value={lead?.date_sale_term ? <span>
+                        {moment(lead.date_sale_term).format("DD.MM.YYYY HH:mm")}
                         {(moment().format("X") < moment(lead.date_sale_term).format("X")) && <span className="opacity-60 pl-4">
                             через {moment(lead.date_sale_term).diff(moment(), "days")} дн.
                         </span>}
-                    </span>}
+                    </span> : "---"}
                 />
                 <ItemValue
                     text="Дата продажи"
-                    value={lead?.date_sale && moment(lead.date_sale).format("DD.MM.YYYY")}
+                    value={lead?.date_sale ? moment(lead.date_sale).format("DD.MM.YYYY HH:mm") : "---"}
                 />
                 <ItemValue
                     text="Дата ожидаемой подачи документов"
-                    value={lead?.date_sent_documents ? moment(lead.date_sent_documents).format("DD.MM.YYYY") : "---"}
+                    value={lead?.date_sent_documents ? moment(lead.date_sent_documents).format("DD.MM.YYYY HH:mm") : "---"}
                 />
                 <ItemValue
                     text="Фактическая дата поступления документов"
-                    value={lead?.date_sent_documents_actual ? moment(lead.date_sent_documents_actual).format("DD.MM.YYYY") : "---"}
+                    value={lead?.date_sent_documents_actual ? moment(lead.date_sent_documents_actual).format("DD.MM.YYYY HH:mm") : "---"}
                 />
                 <ItemValue
-                    text="Ориентировочная дата проверки"
-                    value={lead?.date_inspection ? moment(lead.date_inspection).format("DD.MM.YYYY") : "---"}
+                    text="Дата ожидаемой проверки"
+                    value={lead?.date_inspection ? moment(lead.date_inspection).format("DD.MM.YYYY HH:mm") : "---"}
                 />
                 <ItemValue
                     text="Фактическая дата проверки"
-                    value={lead?.date_inspection_actual ? moment(lead.date_inspection_actual).format("DD.MM.YYYY") : "---"}
+                    value={lead?.date_inspection_actual ? moment(lead.date_inspection_actual).format("DD.MM.YYYY HH:mm") : "---"}
                 />
                 <ItemValue
                     text="Критерии проверки"
@@ -120,24 +120,20 @@ export default function Leads() {
                     </div>}
                 />
                 <ItemValue
-                    text="Ориентировочная дата выполненого перезамера"
-                    value={lead?.date_remeasurement ? moment(lead.date_remeasurement).format("DD.MM.YYYY") : "---"}
-                />
-                <ItemValue
-                    text="Фактическая дата выполненого перезамера"
-                    value={lead?.date_remeasurement_actual ? moment(lead.date_remeasurement_actual).format("DD.MM.YYYY") : "---"}
-                />
-                <ItemValue
                     text="Ориентировочная дата запуска"
-                    value={lead?.date_start ? moment(lead.date_start).format("DD.MM.YYYY") : "---"}
+                    value={lead?.date_start ? moment(lead.date_start).format("DD.MM.YYYY HH:mm") : "---"}
                 />
                 <ItemValue
                     text="Фактическая дата запуска"
-                    value={lead?.date_start_actual ? moment(lead.date_start_actual).format("DD.MM.YYYY") : "---"}
+                    value={lead?.date_start_actual ? moment(lead.date_start_actual).format("DD.MM.YYYY HH:mm") : "---"}
                 />
                 <ItemValue
                     text="Сотрудник"
                     value={lead?.employee?.fullname || "---"}
+                />
+                <ItemValue
+                    text="Перезамеры"
+                    value={(lead?.remeasurements || []).length}
                 />
                 {fields.map((field: FieldProps) => <ItemValue
                     key={field.id}
@@ -145,6 +141,29 @@ export default function Leads() {
                     value={typeof lead == "object" ? lead[field.name] : null}
                 />)}
             </Card>
+
+            {(lead?.remeasurements || []).length > 0 && <Card>
+                <Header as="h4">Перезамеры</Header>
+                {lead.remeasurements.map((item: any, key: number) => <div key={key}>
+                    <ItemValue
+                        text="Ожидаемая дата перезамера"
+                        value={item?.date ? moment(item.date).format("DD.MM.YYYY HH:mm") : "---"}
+                    />
+                    <ItemValue
+                        text="Фактическая дата перезамера"
+                        value={item?.datedate_actual ? moment(item.datedate_actual).format("DD.MM.YYYY HH:mm") : "---"}
+                    />
+                    <ItemValue
+                        text="Сотрудник"
+                        value={item?.employee?.fullname || "---"}
+                    />
+                    <ItemValue
+                        text="Комментарий"
+                        value={<i>{item?.comment || "---"}</i>}
+                    />
+                    {(lead.remeasurements.length !== (key + 1)) && <hr className="my-3" />}
+                </div>)}
+            </Card>}
 
             {(typeof lead?.feeds == "object" && lead?.feeds?.length > 0) && <Card>
                 <Header as="h4">История изменений</Header>

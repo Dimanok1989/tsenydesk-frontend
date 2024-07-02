@@ -42,7 +42,6 @@ export default function CreateLeads() {
         open={open}
         header="Новая заявка"
         centered={false}
-        size="tiny"
         closeIcon={<Icon name="close" fitted link onClick={() => close()} />}
         content={<div className="p-5 relative">
 
@@ -57,6 +56,7 @@ export default function CreateLeads() {
                     employees={create.response?.employees || []}
                     inspections={create.response?.inspections || []}
                     fields={create.response?.fields || []}
+                    errors={store?.response?.errors || []}
                 />
 
             </Form>}

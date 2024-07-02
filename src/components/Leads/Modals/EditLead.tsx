@@ -59,7 +59,6 @@ export default function EditLead(props: EditLeadProps) {
         open={leadId !== null}
         header="Изменить заявку"
         centered={false}
-        size="tiny"
         closeIcon={<Icon name="close" fitted link onClick={() => close()} />}
         content={<div className="p-5 relative">
 
@@ -71,6 +70,7 @@ export default function EditLead(props: EditLeadProps) {
                 employees={response.employees || []}
                 inspections={response.inspections || []}
                 fields={response.fields || []}
+                errors={response.errors || {}}
             />
 
             <Dimmer active={loading} inverted>
@@ -85,7 +85,7 @@ export default function EditLead(props: EditLeadProps) {
                 icon: "save",
                 positive: true,
                 onClick: () => save(),
-                disabled: loading || update.isLoading || update.isError || update.isLoading,
+                disabled: loading || update.isLoading,
                 loading: update.isLoading,
             }
         ]}

@@ -5,14 +5,15 @@ import { Button, Dropdown, DropdownItemProps, Form, Icon, Message, Modal } from 
 
 type EmployeeFieldProps = {
     name?: string;
-    label?: string;
+    label?: string | null;
     placeholder?: string;
     fluid?: boolean;
-    onChange?: any;
+    onChange?: (e: any, data: any) => any;
     value?: any;
     disabled?: boolean;
     error?: string;
     employees: EmployeeOption[],
+    notWithAdd?: boolean,
 };
 
 type EmployeeOption = any;
@@ -28,6 +29,7 @@ export default function EmployeeField({
     onChange,
     value,
     employees,
+    notWithAdd,
 }: EmployeeFieldProps) {
 
     const [addShow, setAddShow] = useState<boolean>(false);
@@ -94,10 +96,10 @@ export default function EmployeeField({
     }, [store]);
 
     return <Form.Field>
-        <label>Сотурдник</label>
+        <label>{label}</label>
         <Dropdown
             name={name}
-            label={label || "Сотурдник"}
+            // label={label || "Сотурдник"}
             placeholder={placeholder || "Выберите сотурдника"}
             selection
             fluid={fluid}
@@ -111,10 +113,10 @@ export default function EmployeeField({
             error={Boolean(error)}
             value={value}
         />
-        <div className="mt-2 text-blue-500 flex items-center justify-end opacity-60 hover:opacity-100 cursor-pointer" onClick={() => setAddShow(true)}>
+        {!Boolean(notWithAdd) && <div className="mt-2 text-blue-500 flex items-center justify-end opacity-60 hover:opacity-100 cursor-pointer" onClick={() => setAddShow(true)}>
             <Icon name="user plus" />
             <span>Добавить сотурдника</span>
-        </div>
+        </div>}
 
         <Modal
             open={addShow}

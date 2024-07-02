@@ -1,4 +1,4 @@
-import { Checkbox, Form } from "semantic-ui-react";
+import { Button, Checkbox, Form } from "semantic-ui-react";
 import moment from "moment";
 import { FieldProps } from "@/stores/fields";
 import SelectMultiple from "@/components/Fields/Items/SelectMultiple";
@@ -35,7 +35,11 @@ export default function FormLead(props: FormLeadProps) {
         && typeof formdata?.inspection_types[2] == "boolean"
         && formdata.inspection_types[2] === false;
 
-    return <Form>
+    const remeasurements = formdata?.remeasurements
+        ? (formdata.remeasurements.length === 0 ? [{}] : formdata.remeasurements)
+        : [{}];
+
+    return <Form loading={loading}>
 
         <Form.Input
             label="Номер замера"
@@ -43,7 +47,7 @@ export default function FormLead(props: FormLeadProps) {
             name="number"
             onChange={handleChange}
             value={formdata.number || ""}
-            disabled={loading}
+            // disabled={loading}
             error={errors?.number}
             required
         />
@@ -62,22 +66,23 @@ export default function FormLead(props: FormLeadProps) {
             onChange={handleChange}
             value={formdata.status_id || ""}
             required
-            disabled={loading}
+            // disabled={loading}
             error={errors?.status_id}
         /> */}
 
         <EmployeeField
+            label="Сотрудник"
             name="employee_id"
             onChange={handleChange}
             value={formdata.employee_id || ""}
-            disabled={loading}
+            // disabled={loading}
             error={errors?.employee_id}
             employees={employees || []}
         />
 
         <Form.Input
             label="Дата продажи"
-            type="date"
+            type="datetime-local"
             name="date_sale"
             onChange={(e, { name, value }) => {
                 handleChange(e, { name, value });
@@ -94,22 +99,22 @@ export default function FormLead(props: FormLeadProps) {
                     });
                 }
             }}
-            value={formdata.date_sale ? moment(formdata.date_sale).format("YYYY-MM-DD") : ""}
-            disabled={loading}
+            value={formdata.date_sale ? moment(formdata.date_sale).format("YYYY-MM-DD\THH:mm") : ""}
+            // disabled={loading}
             error={errors?.date_sale}
         />
 
         <Form.Group widths='equal' className="!mb-2">
             <Form.Input
                 label="Дата срока продажи"
-                type="date"
+                type="datetime-local"
                 name="date_sale_term"
                 onChange={(e, { name, value }) => {
                     handleChange(e, { name: "days_sale_term", value: null });
                     handleChange(e, { name, value });
                 }}
-                value={formdata.date_sale_term ? moment(formdata.date_sale_term).format("YYYY-MM-DD") : ""}
-                disabled={loading}
+                value={formdata.date_sale_term ? moment(formdata.date_sale_term).format("YYYY-MM-DD\THH:mm") : ""}
+                // disabled={loading}
                 error={errors?.date_sale_term}
             />
             <Form.Input
@@ -127,7 +132,7 @@ export default function FormLead(props: FormLeadProps) {
                     });
                 }}
                 value={formdata.days_sale_term || ""}
-                disabled={loading}
+                // disabled={loading}
                 error={errors?.days_sale_term}
             />
         </Form.Group>
@@ -137,20 +142,20 @@ export default function FormLead(props: FormLeadProps) {
         <Form.Group widths='equal' className="!mt-8">
             <Form.Input
                 label="Дата ожидаемой подачи документов"
-                type="date"
+                type="datetime-local"
                 name="date_sent_documents"
                 onChange={handleChange}
-                value={formdata?.date_sent_documents ? moment(formdata.date_sent_documents).format("YYYY-MM-DD") : ""}
-                disabled={loading}
+                value={formdata?.date_sent_documents ? moment(formdata.date_sent_documents).format("YYYY-MM-DD\THH:mm") : ""}
+                // disabled={loading}
                 error={errors?.date_sent_documents}
             />
             <Form.Input
                 label="Факт. дата поступления док-ов"
-                type="date"
+                type="datetime-local"
                 name="date_sent_documents_actual"
                 onChange={handleChange}
-                value={formdata?.date_sent_documents_actual ? moment(formdata.date_sent_documents_actual).format("YYYY-MM-DD") : ""}
-                disabled={loading}
+                value={formdata?.date_sent_documents_actual ? moment(formdata.date_sent_documents_actual).format("YYYY-MM-DD\THH:mm") : ""}
+                // disabled={loading}
                 error={errors?.date_sent_documents_actual}
             />
         </Form.Group>
@@ -158,20 +163,20 @@ export default function FormLead(props: FormLeadProps) {
         <Form.Group widths='equal'>
             <Form.Input
                 label="Дата ожидаемой проверки"
-                type="date"
+                type="datetime-local"
                 name="date_inspection"
                 onChange={handleChange}
-                value={formdata?.date_inspection ? moment(formdata.date_inspection).format("YYYY-MM-DD") : ""}
-                disabled={loading}
+                value={formdata?.date_inspection ? moment(formdata.date_inspection).format("YYYY-MM-DD\THH:mm") : ""}
+                // disabled={loading}
                 error={errors?.date_inspection}
             />
             <Form.Input
                 label="Факт. дата проверки"
-                type="date"
+                type="datetime-local"
                 name="date_inspection_actual"
                 onChange={handleChange}
-                value={formdata?.date_inspection_actual ? moment(formdata.date_inspection_actual).format("YYYY-MM-DD") : ""}
-                disabled={loading}
+                value={formdata?.date_inspection_actual ? moment(formdata.date_inspection_actual).format("YYYY-MM-DD\THH:mm") : ""}
+                // disabled={loading}
                 error={errors?.date_inspection_actual}
             />
         </Form.Group>
@@ -197,7 +202,6 @@ export default function FormLead(props: FormLeadProps) {
                             inspectionTypes[value] = checked
                             handleChange(e, { name: 'inspection_types', value: inspectionTypes })
                         }}
-                        disabled={loading}
                     />
                     <Checkbox
                         radio
@@ -215,50 +219,111 @@ export default function FormLead(props: FormLeadProps) {
                             inspectionTypes[value] = !checked
                             handleChange(e, { name: 'inspection_types', value: inspectionTypes })
                         }}
-                        disabled={loading}
+                    />
+                    <Checkbox
+                        radio
+                        label="Не выбрано"
+                        name={`inspection_types_${key}`}
+                        className="!ms-3"
+                        value={e.value}
+                        checked={
+                            typeof formdata?.inspection_types == "object"
+                            && (
+                                formdata?.inspection_types[e.value] === null
+                                || formdata?.inspection_types[e.value] === undefined
+                            )
+                        }
+                        onClick={(e, { value }: any) => {
+                            let inspectionTypes: any = formdata?.inspection_types || {};
+                            inspectionTypes[value] = null;
+                            handleChange(e, { name: 'inspection_types', value: inspectionTypes })
+                        }}
                     />
                 </div>
             })}
         </Form.Field>
 
-        <Form.Group widths='equal' className={`${remeasurement ? '' : '!hidden'}`}>
-            <Form.Input
-                label="Дата выполненого перезамера"
-                type="date"
-                name="date_remeasurement"
-                onChange={handleChange}
-                value={formdata.date_remeasurement ? moment(formdata.date_remeasurement).format("YYYY-MM-DD") : ""}
-                disabled={loading}
-                error={errors?.date_remeasurement}
-            />
-            <Form.Input
-                label="Факт. дата перезамера"
-                type="date"
-                name="date_remeasurement_actual"
-                onChange={handleChange}
-                value={formdata.date_remeasurement_actual ? moment(formdata.date_remeasurement_actual).format("YYYY-MM-DD") : ""}
-                disabled={loading}
-                error={errors?.date_remeasurement_actual}
-            />
-        </Form.Group>
+        <div className={`mb-3 ${remeasurement ? '' : '!hidden'}`}>
+
+            <hr className="my-5" />
+
+            {remeasurements.map((i: any, k: number) => {
+                return <Form.Group widths='equal' key={k} className="!mb-1">
+                    <Form.Input
+                        label={k === 0 ? "Дата перезамера" : ""}
+                        type="datetime-local"
+                        onChange={(e, { value }) => {
+                            let data = remeasurements;
+                            data[k].date = value;
+                            handleChange(e, { name: "remeasurements", value: data });
+                        }}
+                        value={i.date ? moment(i.date).format("YYYY-MM-DD\THH:mm") : ""}
+                    // disabled={loading}
+                    />
+                    <Form.Input
+                        label={k === 0 ? "Факт. дата перезамера" : ""}
+                        type="datetime-local"
+                        onChange={(e, { value }) => {
+                            let data = remeasurements;
+                            data[k].date_actual = value;
+                            handleChange(e, { name: "remeasurements", value: data });
+                        }}
+                        value={i.date_actual ? moment(i.date_actual).format("YYYY-MM-DD\THH:mm") : ""}
+                    />
+                    <EmployeeField
+                        label={k === 0 ? "Сотурдник" : null}
+                        onChange={(e, { value }) => {
+                            let data = remeasurements;
+                            data[k].employee_id = value;
+                            handleChange(e, { name: "remeasurements", value: data });
+                        }}
+                        value={i.employee_id || ""}
+                        employees={employees || []}
+                        notWithAdd
+                    />
+                    <Form.Input
+                        label={k === 0 ? "Комментарий" : ""}
+                        onChange={(e, { value }) => {
+                            let data = remeasurements;
+                            data[k].comment = value;
+                            handleChange(e, { name: "remeasurements", value: data });
+                        }}
+                        value={i.comment || ""}
+                    />
+                    {((k + 1) === (remeasurements).length) && <Button
+                        icon="plus"
+                        basic
+                        className={`${k === 0 ? "!mt-[17px]" : "!mt-[4px]"} !mb-[1px]`}
+                        color="green"
+                        title="Добавить ещё перезамер"
+                        onClick={e => {
+                            let data = remeasurements;
+                            data[k + 1] = {};
+                            handleChange(e, { name: "remeasurements", value: data });
+                        }}
+                    />}
+                </Form.Group>
+            })}
+            <hr className="my-5" />
+        </div>
 
         <Form.Group widths='equal'>
             <Form.Input
                 label="Дата запуска"
-                type="date"
+                type="datetime-local"
                 name="date_start"
                 onChange={handleChange}
-                value={formdata.date_start ? moment(formdata.date_start).format("YYYY-MM-DD") : ""}
-                disabled={loading}
+                value={formdata.date_start ? moment(formdata.date_start).format("YYYY-MM-DD\THH:mm") : ""}
+                // disabled={loading}
                 error={errors?.date_start}
             />
             <Form.Input
                 label="Факт. дата запуска"
-                type="date"
+                type="datetime-local"
                 name="date_start_actual"
                 onChange={handleChange}
-                value={formdata.date_start_actual ? moment(formdata.date_start_actual).format("YYYY-MM-DD") : ""}
-                disabled={loading}
+                value={formdata.date_start_actual ? moment(formdata.date_start_actual).format("YYYY-MM-DD\THH:mm") : ""}
+                // disabled={loading}
                 error={errors?.date_start_actual}
             />
         </Form.Group>
@@ -292,7 +357,7 @@ export default function FormLead(props: FormLeadProps) {
                 {...props}
                 key={field.id}
                 onChange={handleChange}
-                disabled={loading}
+            // disabled={loading}
             />
         })}
 
