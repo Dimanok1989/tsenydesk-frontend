@@ -233,7 +233,7 @@ function FileItem(props: any) {
                     label: null,
                     labelPosition: undefined,
                     loading: loading,
-                    disabled: loading,
+                    disabled: loading || true,
                 }}
                 input={{
                     id: 'input-control-id',
