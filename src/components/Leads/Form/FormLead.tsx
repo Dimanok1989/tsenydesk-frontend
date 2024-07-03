@@ -258,7 +258,7 @@ export default function FormLead(props: FormLeadProps) {
                             handleChange(e, { name: "remeasurements", value: data });
                         }}
                         value={i.date ? moment(i.date).format("YYYY-MM-DD\THH:mm") : ""}
-                    // disabled={loading}
+                        className="!pr-0"
                     />
                     <Form.Input
                         label={k === 0 ? "Факт. дата перезамера" : ""}
@@ -269,6 +269,7 @@ export default function FormLead(props: FormLeadProps) {
                             handleChange(e, { name: "remeasurements", value: data });
                         }}
                         value={i.date_actual ? moment(i.date_actual).format("YYYY-MM-DD\THH:mm") : ""}
+                        className="!pr-0"
                     />
                     <EmployeeField
                         label={k === 0 ? "Сотурдник" : null}
@@ -289,6 +290,28 @@ export default function FormLead(props: FormLeadProps) {
                             handleChange(e, { name: "remeasurements", value: data });
                         }}
                         value={i.comment || ""}
+                        className="!pl-0"
+                    />
+                    <Button
+                        icon="trash"
+                        basic
+                        className={`${k === 0 ? "!mt-[17px]" : "!mt-[4px]"} !mb-[1px]`}
+                        color="red"
+                        title="Удалить этот перезамер"
+                        onClick={e => {
+
+                            let data: any[] = [];
+
+                            remeasurements.forEach((i: any, key: number) => {
+                                if (k !== key) {
+                                    data.push(i);
+                                }
+                            });
+
+                            console.log(data);
+
+                            handleChange(e, { name: "remeasurements", value: data });
+                        }}
                     />
                     {((k + 1) === (remeasurements).length) && <Button
                         icon="plus"
@@ -304,6 +327,32 @@ export default function FormLead(props: FormLeadProps) {
                     />}
                 </Form.Group>
             })}
+            <hr className="my-5" />
+            <Form.Group widths='equal' className="!mb-1">
+                    <Form.Input
+                        label="Дата предв. демонтажа"
+                        type="datetime-local"
+                        name="dismantling_date"
+                        onChange={handleChange}
+                        value={formdata?.dismantling_date ? moment(formdata.dismantling_date).format("YYYY-MM-DD\THH:mm") : ""}
+                        error={errors?.dismantling_date}
+                    />
+                    <EmployeeField
+                        label="Сотурдник"
+                        name="dismantling_employee_id"
+                        onChange={handleChange}
+                        value={formdata.dismantling_employee_id || ""}
+                        employees={employees || []}
+                        notWithAdd
+                    />
+                    <Form.Input
+                        label="Комментарий"
+                        name="dismantling_comment"
+                        onChange={handleChange}
+                        value={formdata.dismantling_comment || ""}
+                        className="!pl-0"
+                    />
+            </Form.Group>
             <hr className="my-5" />
         </div>
 

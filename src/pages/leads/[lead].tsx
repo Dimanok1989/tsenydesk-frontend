@@ -9,8 +9,9 @@ import { useAppDispatch, useAppSelector } from "@/stores/hooks";
 import { setLead } from "@/stores/leads";
 import moment from "moment";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import { Feed, Header, Icon, Label } from "semantic-ui-react";
+import { createRef, useCallback, useEffect, useRef, useState } from "react";
+import { Button, Feed, Form, Header, Icon, Input, Label } from "semantic-ui-react";
+import { InputFile } from "semantic-ui-react-input-file";
 
 const ItemValue = (props: any) => <div className="flex items-center p-2 rounded cursor-default hover:bg-slate-50">
     <div className="min-w-[50%] mr-3"><strong>{props.text}</strong></div>
@@ -78,6 +79,7 @@ export default function Leads() {
             </div>
 
             <Card>
+                <Header as="h3">Основные данные</Header>
                 <ItemValue
                     text="Номер замера"
                     value={lead?.number}
@@ -114,8 +116,8 @@ export default function Leads() {
                 <ItemValue
                     text="Критерии проверки"
                     value={<div className="flex gap-3">
-                        {(lead?.inspections || []).map((item: string, key: number) => <Label key={key} color="orange">
-                            {item}
+                        {(lead?.inspections || []).map((item: any, key: number) => <Label key={key} color={item?.color || "orange"}>
+                            {String(`${item?.title || ""} ${item?.value || ""}`).trim()}
                         </Label>)}
                     </div>}
                 />
@@ -140,10 +142,23 @@ export default function Leads() {
                     text={field.title}
                     value={typeof lead == "object" ? lead[field.name] : null}
                 />)}
+                <hr className="my-2" />
+                <ItemValue
+                    text="Даата предварительного монтажа"
+                    value={lead?.dismantling_date ? moment(lead.dismantling_date).format("DD.MM.YYYY HH:mm") : "---"}
+                />
+                <ItemValue
+                    text="Сотрудник дкмонтажа"
+                    value={lead?.dismantling_employee?.fullname || "---"}
+                />
+                <ItemValue
+                    text="Комментарий демонтажа"
+                    value={<i>{lead?.dismantling_comment || "---"}</i>}
+                />
             </Card>
 
             {(lead?.remeasurements || []).length > 0 && <Card>
-                <Header as="h4">Перезамеры</Header>
+                <Header as="h3">Перезамеры</Header>
                 {lead.remeasurements.map((item: any, key: number) => <div key={key}>
                     <ItemValue
                         text="Ожидаемая дата перезамера"
@@ -151,7 +166,7 @@ export default function Leads() {
                     />
                     <ItemValue
                         text="Фактическая дата перезамера"
-                        value={item?.datedate_actual ? moment(item.datedate_actual).format("DD.MM.YYYY HH:mm") : "---"}
+                        value={item?.date_actual ? moment(item.date_actual).format("DD.MM.YYYY HH:mm") : "---"}
                     />
                     <ItemValue
                         text="Сотрудник"
@@ -161,9 +176,31 @@ export default function Leads() {
                         text="Комментарий"
                         value={<i>{item?.comment || "---"}</i>}
                     />
-                    {(lead.remeasurements.length !== (key + 1)) && <hr className="my-3" />}
+                    {(lead.remeasurements.length !== (key + 1)) && <hr className="my-2" />}
                 </div>)}
             </Card>}
+
+            <Card>
+                <Header as="h3">Файлы</Header>
+                <FileItem
+                    title="Фото фасада"
+                />
+                <FileItem
+                    title="Табличка дома"
+                />
+                <FileItem
+                    title="Фото замерного листа"
+                />
+                <FileItem
+                    title="Фото информ листа"
+                />
+                <FileItem
+                    title="Фото договора"
+                />
+                <FileItem
+                    title="Фото внутри объекта"
+                />
+            </Card>
 
             {(typeof lead?.feeds == "object" && lead?.feeds?.length > 0) && <Card>
                 <Header as="h4">История изменений</Header>
@@ -173,5 +210,36 @@ export default function Leads() {
             </Card>}
         </div>
     </Content>
+}
 
+function FileItem(props: any) {
+
+    const [loading, setLoading] = useState(false);
+    const handleUpload = useCallback(() => {
+        setLoading(true);
+    }, []);
+
+    return <div className="mb-3">
+
+        <Header as="h4" className="!mb-1">{props.title}</Header>
+
+        <div className="flex-wrap gap-3">
+            <InputFile
+                button={{
+                    icon: "plus",
+                    basic: true,
+                    size: "massive",
+                    title: "Добавить новое фото",
+                    label: null,
+                    labelPosition: undefined,
+                    loading: loading,
+                    disabled: loading,
+                }}
+                input={{
+                    id: 'input-control-id',
+                    onChange: handleUpload
+                }}
+            />
+        </div>
+    </div>
 }
