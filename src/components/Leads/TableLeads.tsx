@@ -86,8 +86,8 @@ const TableRow = (props: LeadResource) => {
             {props.date_inspection && <div className="opacity-70">{moment(props.date_inspection).format("DD.MM.YYYY")}</div>}
             {props.date_inspection_actual && <div>{moment(props.date_inspection_actual).format("DD.MM.YYYY")}</div>}
             {(props?.inspections || []).length > 0 && <div className="flex">
-                {(props?.inspections || []).map((item: string, key: number) => <Label key={key} color="orange" size="tiny">
-                    {item}
+                {(props?.inspections || []).map((item: any, key: number) => <Label key={key} color={item?.color || "orange"}>
+                    {String(`${item?.title || ""} ${item?.value || ""}`).trim()}
                 </Label>)}
             </div>}
         </Table.Cell>
