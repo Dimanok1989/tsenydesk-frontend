@@ -9,8 +9,8 @@ import { useAppDispatch, useAppSelector } from "@/stores/hooks";
 import { setLead } from "@/stores/leads";
 import moment from "moment";
 import { useParams } from "next/navigation";
-import { createRef, useCallback, useEffect, useRef, useState } from "react";
-import { Button, Feed, Form, Header, Icon, Input, Label } from "semantic-ui-react";
+import { useCallback, useEffect, useState } from "react";
+import { Feed, Header, Icon, Image, Label } from "semantic-ui-react";
 import { InputFile } from "semantic-ui-react-input-file";
 
 const ItemValue = (props: any) => <div className="flex items-center p-2 rounded cursor-default hover:bg-slate-50">
@@ -184,21 +184,27 @@ export default function Leads() {
                 <Header as="h3">Файлы</Header>
                 <FileItem
                     title="Фото фасада"
+                    type="facades"
                 />
                 <FileItem
                     title="Табличка дома"
+                    type="home"
                 />
                 <FileItem
                     title="Фото замерного листа"
+                    type="sizes"
                 />
                 <FileItem
                     title="Фото информ листа"
+                    type="info"
                 />
                 <FileItem
                     title="Фото договора"
+                    type="agreement"
                 />
                 <FileItem
                     title="Фото внутри объекта"
+                    type="inside"
                 />
             </Card>
 
@@ -214,16 +220,58 @@ export default function Leads() {
 
 function FileItem(props: any) {
 
+    const params = useParams();
+    const lead = useAppSelector((state) => state.leads.lead);
+    const files = lead?.files ? (lead.files[props.type] || []) : [];
+
     const [loading, setLoading] = useState(false);
-    const handleUpload = useCallback(() => {
+    const dispatch = useAppDispatch();
+
+    const config = {
+        headers: {
+            'content-type': 'multipart/form-data',
+        },
+    };
+
+    const handleUpload = useCallback((e: any) => {
+
         setLoading(true);
+        const formData = new FormData();
+        [...e?.target?.files || []].forEach((file: File) => {
+            formData.append('files[]', file);
+        });
+        formData.append('type', props.type);
+
+        axios.post(`leads/${params.lead}/upload`, formData, config)
+            .then(({ data }) => {
+                dispatch(setLead(data));
+            })
+            .catch(err => {
+
+            })
+            .then(() => {
+                setLoading(false);
+            });
     }, []);
 
     return <div className="mb-3">
 
         <Header as="h4" className="!mb-1">{props.title}</Header>
 
-        <div className="flex-wrap gap-3">
+        <div className="flex flex-wrap gap-3">
+            {files.map((f: any, k: number) => <a
+                key={k}
+                className="w-[66px] h-[62px] bg-slate-100 opacity-80 hover:opacity-100 rounded flex items-center justify-center overflow-hidden"
+                target="_blank"
+                href={f.url}
+                download={f.name}
+                title={f.name}
+            >
+                {f.is_image
+                    ? <Image src={f.url} className="!w-full !h-full" />
+                    : <Icon name="file" fitted size="big"/>
+                }
+            </a>)}
             <InputFile
                 button={{
                     icon: "plus",
@@ -233,7 +281,7 @@ function FileItem(props: any) {
                     label: null,
                     labelPosition: undefined,
                     loading: loading,
-                    disabled: loading || true,
+                    disabled: loading,
                 }}
                 input={{
                     id: 'input-control-id',
